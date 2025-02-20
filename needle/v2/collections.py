@@ -1,24 +1,16 @@
 """
-This module provides NeedleCollections class for interacting with Needle API's collections endpoint.
+This module provides NeedleCollections class for interacting with 
+Needle API's collections endpoint.
 """
 
-from typing import Optional
-
+from dataclasses import asdict
 import requests # type: ignore
 
-from needle.v1.models import (
-    NeedleConfig,
-    NeedleBaseClient,
-    Collection,
-    Error,
-    SearchResult,
-    CollectionStats,
-    CollectionDataStats,
-)
-from needle.v1.collections.files import NeedleCollectionsFiles
+from needle.v2.models import NeedleConfig, Error, Collection, SearchResult, CollectionStats, CollectionDataStats
 
+from typing import Any, Optional
 
-class NeedleCollections(NeedleBaseClient):
+class NeedleCollections:
     """
     A client for interacting with the Needle API's collections endpoint.
 
@@ -27,26 +19,22 @@ class NeedleCollections(NeedleBaseClient):
     """
 
     def __init__(self, config: NeedleConfig, headers: dict):
-        super().__init__(config, headers)
-
-        self.endpoint = f"{config.url}/api/v1/collections"
-        self.search_endpoint = f"{config.search_url}/api/v1/collections"
+        self.config = config
+        self.headers = headers
+        self.collections_endpoint = f"{config.url}/api/v1/collections"
 
         # requests config
         self.session = requests.Session()
         self.session.headers.update(headers)
         self.session.timeout = 120
 
-        # sub clients
-        self.files = NeedleCollectionsFiles(config, headers)
-
-    def create(self, name: str, file_ids: Optional[list[str]] = None):
+    def create(self, name: str, file_ids: Optional[list[str]] = None) -> Collection:
         """
         Creates a new collection with the specified name and file IDs.
 
         Args:
             name (str): The name of the collection.
-            file_ids (Optiona[list[str]]): A list of file IDs to include in the collection.
+            file_ids (Optional[list[str]]): A list of file IDs to include in the collection.
 
         Returns:
             Collection: The created collection object.
@@ -55,39 +43,7 @@ class NeedleCollections(NeedleBaseClient):
             Error: If the API request fails.
         """
         req_body = {"name": name, "file_ids": file_ids}
-        resp = self.session.post(
-            f"{self.endpoint}",
-            json=req_body,
-        )
-        body = resp.json()
-        if resp.status_code >= 400:
-            error = body.get("error")
-            raise Error(**error)
-        c = body.get("result")
-        return Collection(
-            id=c.get("id"),
-            name=c.get("name"),
-            embedding_model=c.get("embedding_model"),
-            embedding_dimensions=c.get("embedding_dimensions"),
-            search_queries=c.get("search_queries"),
-            created_at=c.get("created_at"),
-            updated_at=c.get("updated_at"),
-        )
-    
-    def get(self, collection_id: str):
-        """
-        Retrieves a collection by its ID.
-
-        Args:
-            collection_id (str): The ID of the collection to retrieve.
-
-        Returns:
-            Collection: The retrieved collection object.
-
-        Raises:
-            Error: If the API request fails.
-        """
-        resp = self.session.get(f"{self.endpoint}/{collection_id}")
+        resp = self.session.post(self.collections_endpoint, json=req_body)
         body = resp.json()
         if resp.status_code >= 400:
             error = body.get("error")
@@ -103,7 +59,7 @@ class NeedleCollections(NeedleBaseClient):
             updated_at=c.get("updated_at"),
         )
 
-    def list(self):
+    def list(self) -> list[Collection]:
         """
         Lists all collections.
 
@@ -113,7 +69,7 @@ class NeedleCollections(NeedleBaseClient):
         Raises:
             Error: If the API request fails.
         """
-        resp = self.session.get(self.endpoint)
+        resp = self.session.get(self.collections_endpoint)
         body = resp.json()
         if resp.status_code >= 400:
             error = body.get("error")
@@ -130,6 +86,36 @@ class NeedleCollections(NeedleBaseClient):
             )
             for c in body.get("result")
         ]
+
+    def get(self, collection_id: str) -> Collection:
+        """
+        Retrieves a collection by its ID.
+
+        Args:
+            collection_id (str): The ID of the collection to retrieve.
+
+        Returns:
+            Collection: The retrieved collection object.
+
+        Raises:
+            Error: If the API request fails.
+        """
+        resp = self.session.get(f"{self.collections_endpoint}/{collection_id}")
+        body = resp.json()
+        if resp.status_code >= 400:
+            error = body.get("error")
+            raise Error(**error)
+        c = body.get("result")
+        return Collection(
+            id=c.get("id"),
+            name=c.get("name"),
+            embedding_model=c.get("embedding_model"),
+            embedding_dimensions=c.get("embedding_dimensions"),
+            search_queries=c.get("search_queries"),
+            created_at=c.get("created_at"),
+            updated_at=c.get("updated_at"),
+        )
+
 
     def identify_collection(self, collection_name: str) -> str:
         """Get collection ID from name.
