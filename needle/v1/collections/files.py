@@ -1,6 +1,6 @@
 """
 This module provides NeedleCollectionsFiles class for interacting with 
-Needle API's collectiton files endpoint.
+Needle API's collection files endpoint.
 """
 
 from dataclasses import asdict
@@ -29,7 +29,6 @@ class NeedleCollectionsFiles(NeedleBaseClient):
         self.session = requests.Session()
         self.session.headers.update(headers)
         self.session.timeout = 120
-        self.collection_id = None
 
     def add(self, collection_id: str, files: list[FileToAdd]):
         """
@@ -50,6 +49,7 @@ class NeedleCollectionsFiles(NeedleBaseClient):
         req_body = {"files": [asdict(f) for f in files]}
         resp = self.session.post(endpoint, json=req_body)
         body = resp.json()
+        
         if resp.status_code >= 400:
             error = body.get("error")
             raise Error(**error)
@@ -70,14 +70,6 @@ class NeedleCollectionsFiles(NeedleBaseClient):
             for cf in body.get("result")
         ]
 
-    def update_collection_id(self, collection_id: str) -> None:
-        """Set the self.collection ID
-        
-        Args:
-            collection_id: New collection ID to use
-        """
-        self.collection_id = collection_id
-
     def list(self, collection_id: str):
         """
         Lists all files in a specified collection.
@@ -96,6 +88,7 @@ class NeedleCollectionsFiles(NeedleBaseClient):
         endpoint = f"{self.collections_endpoint}/{self.collection_id}/files"
         resp = self.session.get(endpoint)
         body = resp.json()
+        
         if resp.status_code >= 400:
             error = body.get("error")
             raise Error(**error)
@@ -116,73 +109,24 @@ class NeedleCollectionsFiles(NeedleBaseClient):
             for cf in body.get("result")
         ]
     
-    def delete(self, file_ids: List[str]) -> None:
+    def delete(self, collection_id: str, file_ids: List[str]) -> None:
         """Delete files from current collection.
 
         Args:
-            file_ids: List of file IDs to delete
+            collection_id (str): The ID of the collection from which files will be deleted.
+            file_ids (List[str]): List of file IDs to delete.
             
         Raises:
-            ValueError: If no collection ID is set
-            requests.RequestException: If deletion request fails
+            ValueError: If no collection ID is set.
+            Error: If the API request fails.
         """
-        if not self.collection_id:
+        if not collection_id:
             raise ValueError("No collection ID set")
 
-        endpoint = f"{self.collections_endpoint}/{self.collection_id}/files"
+        endpoint = f"{self.collections_endpoint}/{collection_id}/files"
         req_body = {"file_ids": file_ids}
         resp = self.session.delete(endpoint, json=req_body)
-        
+
         if resp.status_code >= 400:
-            raise  requests.RequestException(f"File deletion failed: {resp.status_code} - {resp.text}")
-        else:
-            f"File deletion successful"
-        
-    def add_url(
-        self, 
-        file_url: str, 
-        collection_id: Optional[str] = None,
-        overwrite: bool = False
-    ) -> None:
-        """Add files to collection from URL.
-        
-        Args:
-            file_url: URL of the file to add
-            collection_name: Optional collection name to use instead of ID
-            overwrite: Whether to overwrite existing files
-            
-        Raises:
-            ValueError: If collection cannot be determined or file exists
-        """
-        if not self.collection_id or collection_id:
-            raise ValueError("Collection must be specified by ID or name")
-        elif collection_id:
-            self.collection_id = collection_id
-
-        files_info = {f.name: f.id for f in self.list(self.collection_id)}
-        file_id = files_info.get(file_url)
-
-        if file_id:
-            if not overwrite:
-                raise ValueError(f"File {file_url} already exists in collection {self.collection_id}")
-            self.delete([file_id])
-
-        self.add(
-            collection_id=self.collection_id,
-            files=[FileToAdd(name=file_url, url=file_url)]
-        )
-
-        self._wait_for_indexing()
-        print(f"Successfully added {file_url} to collection {self.collection_id}")
-
-    def _wait_for_indexing(self, check_interval: int = 5) -> None:
-        """Wait for all files in collection to be indexed.
-        
-        Args:
-            check_interval: Seconds to wait between checks
-        """
-        while True:
-            all_files = self.list(self.collection_id)
-            if all(f.status == "indexed" for f in all_files):
-                break
-            sleep(check_interval)
+            error = resp.json().get("error")
+            raise Error(**error)
