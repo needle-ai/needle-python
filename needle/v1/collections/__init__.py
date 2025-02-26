@@ -3,7 +3,6 @@ This module provides NeedleCollections class for interacting with Needle API's c
 """
 
 from typing import Optional
-
 import requests
 
 from needle.v1.models import (
@@ -73,7 +72,7 @@ class NeedleCollections(NeedleBaseClient):
             created_at=c.get("created_at"),
             updated_at=c.get("updated_at"),
         )
-
+    
     def get(self, collection_id: str):
         """
         Retrieves a collection by its ID.
@@ -114,6 +113,7 @@ class NeedleCollections(NeedleBaseClient):
             Error: If the API request fails.
         """
         resp = self.session.get(self.endpoint)
+        print(resp.json())
         body = resp.json()
         if resp.status_code >= 400:
             error = body.get("error")
@@ -130,6 +130,25 @@ class NeedleCollections(NeedleBaseClient):
             )
             for c in body.get("result")
         ]
+
+    def identify_collection(self, collection_name: str) -> str:
+        """Get collection ID from name.
+        
+        Args:
+            collection_name: Name of the collection
+            
+        Returns:
+            Collection ID
+            
+        Raises:
+            ValueError: If collection name is not found
+        """
+        collections_list = self.list()
+        collection_info = {collection.name: collection.id for collection in collections_list}
+        
+        if collection_name not in collection_info:
+            raise ValueError(f"Collection '{collection_name}' not found")
+        return collection_info[collection_name]
 
     def search(
         self,
