@@ -135,8 +135,8 @@ class NeedleCollections(NeedleBaseClient):
         self,
         collection_id: str,
         text: str,
-        max_distance: Optional[float] = None,
         top_k: Optional[int] = None,
+        offset: Optional[int] = None,
     ):
         """
         Searches within a collection based on the provided parameters.
@@ -153,8 +153,8 @@ class NeedleCollections(NeedleBaseClient):
         endpoint = f"{self.search_endpoint}/{collection_id}/search"
         req_body = {
             "text": text,
-            "max_distance": max_distance,
             "top_k": top_k,
+            "offset": offset,
         }
         resp = self.session.post(endpoint, headers=self.headers, json=req_body)
         body = resp.json()
