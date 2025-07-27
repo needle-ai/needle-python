@@ -14,7 +14,7 @@ from needle.v1.collections import NeedleCollections
 from needle.v1.files import NeedleFiles
 
 
-NEEDLE_DEFAULT_URL = "https://needle-ai.com"
+NEEDLE_DEFAULT_URL = "https://needle.app"
 
 
 class NeedleClient(NeedleBaseClient):
@@ -26,7 +26,7 @@ class NeedleClient(NeedleBaseClient):
 
     Initialize the client with an API key and an optional URL.
     If no API key is provided, the client will use the `NEEDLE_API_KEY` environment variable.
-    If no URL is provided, the client will use the default Needle API URL, that is https://needle-ai.com.
+    If no URL is provided, the client will use the default Needle API URL, that is https://needle.app.
 
     Attributes:
         collections (NeedleCollections): A client for managing collections within the Needle API.

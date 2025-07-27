@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "needle-python"
-version = "0.5.0"
+version = "0.6.0"
 description = "Needle client library for Python"
 authors = [
     "Onur Eken <m.onureken@gmail.com>",
@@ -32,8 +32,8 @@ classifiers = [
 ]
 
 [tool.poetry.urls]
-homepage = "https://needle-ai.com"
-documentation = "https://docs.needle-ai.com"
+homepage = "https://needle.app"
+documentation = "https://docs.needle.app"
 repository = "https://github.com/oeken/needle-python"
 issues = "https://github.com/oeken/needle-python/issues"
 

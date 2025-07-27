@@ -3,7 +3,7 @@
 [![PyPI - Version](https://img.shields.io/pypi/v/needle-python.svg)](https://pypi.org/project/needle-python)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/needle-python.svg)](https://pypi.org/project/needle-python)
 
-This Python library provides convenient acccess to Needle API. There are various methods and data types which, we believe will help you explore Needle API quickly. There may be some functionality available in REST API earlier than this Python library. In any case, we recommend to take look the the complete [documentation](https://docs.needle-ai.com). Thank you for flying with us. 🚀
+This Python library provides convenient acccess to Needle API. There are various methods and data types which, we believe will help you explore Needle API quickly. There may be some functionality available in REST API earlier than this Python library. In any case, we recommend to take look the the complete [documentation](https://docs.needle.app). Thank you for flying with us. 🚀
 
 ## Installation
 
@@ -15,7 +15,7 @@ pip install needle-python
 
 ## Usage ⚡️
 
-To get started, generate an API key for your account in developer settings menu at [Needle](https://needle-ai.com). Note that your key will be valid until you revoke it. Set the following env variable before you run your code:
+To get started, generate an API key for your account in developer settings menu at [Needle](https://needle.app). Note that your key will be valid until you revoke it. Set the following env variable before you run your code:
 
 ```
 export NEEDLE_API_KEY=<your-api-key>
