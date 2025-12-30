@@ -3,7 +3,7 @@
 [![PyPI - Version](https://img.shields.io/pypi/v/needle-python.svg)](https://pypi.org/project/needle-python)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/needle-python.svg)](https://pypi.org/project/needle-python)
 
-This Python library provides convenient acccess to Needle API. There are various methods and data types which, we believe will help you explore Needle API quickly. There may be some functionality available in REST API earlier than this Python library. In any case, we recommend to take look the the complete [documentation](https://docs.needle.app). Thank you for flying with us. 🚀
+This Python library provides convenient access to Needle API. There are various methods and data types that we believe will help you explore Needle API quickly. There may be some functionality available in REST API earlier than this Python library. In any case, we recommend to take a look at the complete [documentation](https://docs.needle.app). Thank you for flying with us. 🚀
 
 ## Installation
 
@@ -15,13 +15,13 @@ pip install needle-python
 
 ## Usage ⚡️
 
-To get started, generate an API key for your account in developer settings menu at [Needle](https://needle.app). Note that your key will be valid until you revoke it. Set the following env variable before you run your code:
+To get started, generate an API key for your account in the developer settings menu at [Needle](https://needle.app). Note that your key will be valid until you revoke it. Set the following env variable before you run your code:
 
 ```
 export NEEDLE_API_KEY=<your-api-key>
 ```
 
-`NeedleClient` reads the API key from the environment by default. If you like to override this behaviour you can pass it in as a parameter. 
+`NeedleClient` reads the API key from the environment by default. If you would like to override this behaviour you can pass it in as a parameter. 
 
 ### Retrieve context from Needle
 
@@ -59,14 +59,14 @@ Needle instantly extracts key points from your files.
 
 ### Complete your RAG pipeline
 
-Naturally, to compose a human friendly answer use an LLM provider of your choice. For the demo purposes, we used OpenAI in this example:
+Naturally, to compose a human-friendly answer use an LLM provider of your choice. For demo purposes, we used OpenAI in this example:
 
 ```python
 from openai import OpenAI
 
 system_messages = [{"role": "system", "content": r.content} for r in results] # results from Needle
 user_message = {
-    "role": "system",
+    "role": "user",
     "content": f"""
         Only answer the question based on the provided results data. 
         If there is no data in the provided data for the question, do not try to generate an answer.
@@ -87,17 +87,17 @@ print(answer.choices[0].message.content)
 # -> Retrieval-Augmented Generation (RAG) is the technique that moved into "Adopt" in this volume of the Technology Radar.
 ```
 
-This is one basic example of a RAG pipeline you can quicklu implement using Needle and OpenAI. Feel free to engineer more precise prompts and explore other prompting techniques such as chain-of-thoughts (CoT), graph of thoughts (GoT) etc. 
+This is one basic example of a RAG pipeline you can quickly implement using Needle and OpenAI. Feel free to engineer more precise prompts and explore other prompting techniques such as chain-of-thought (CoT), graph of thoughts (GoT) etc. 
 
-Needle API helps you with hassle-free contextualization however does not limit you to a certain RAG technique. Let us know what you build in our [Discord channel](https://discord.gg/JzJcHgTyZx) :)
+Needle API helps you with hassle-free contextualization however it does not limit you to a certain RAG technique. Let us know what you build in our [Discord channel](https://discord.gg/JzJcHgTyZx) :)
 
 ## Exceptions 🧨
 
-If a request to Needle API fails, `needle.v1.models.Error` object will be thrown. There you can see a `message` and more details about the error.
+If a request to Needle API fails, `needle.v1.models.Error` object will be raised. There you can see a `message` and more details about the error.
 
 ## Support 📞
 
-If you have questions you can contact us in our [Discord channel](https://discord.gg/JzJcHgTyZx). 
+If you have questions, you can contact us in our [Discord channel](https://discord.gg/JzJcHgTyZx). 
 
 # License
 
